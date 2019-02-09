@@ -9,17 +9,12 @@ const mongoose     = require('mongoose');
 const logger       = require('morgan');
 const path         = require('path');
 
-// require connect-flash for flash messages
-const flash = require('connect-flash');
-// then go to line 68ish to activate flash
 
 const session = require('express-session');
 
-// import passport:
-const passport = require('passport');
 
 // import passport docs from config folder
-require('./config/passport-setup');
+const passportSetup = require('./config/passport/passport-setup');
 
 
 // REGISTER THE PARTIALS (ANYWHERE IN THE FILE)
@@ -67,9 +62,6 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 app.locals.title = 'Express - Generated with IronGenerator';
 
 
-// to activate flash messages
-app.use(flash());
-
 // handle session here:
 // app.js
 app.use(session({
@@ -78,20 +70,10 @@ app.use(session({
   saveUninitialized: true
 }));
 
+// moved passport code from here and pasted it to 'passport-setup.js' into a function and call the function below AFTER session
 
-// passport super power is here:
-app.use(passport.initialize()); // <== 'fires' the passport package
-app.use(passport.session()); // <== connects passport to the session
-
-
-
-app.use((req, res, next) => {
-  res.locals.messages = req.flash();
-  if(req.user){
-    res.locals.currentUser = req.user; // <== make currentUser variable available in all hbs whenever we have user in the session
-  }
-  next();
-})
+// MUST come after the session:
+passportSetup(app);
 
 
 // ROUTES MIDDLEWARE:
@@ -102,5 +84,6 @@ app.use('/', index);
 // require auth-routes so the app knows they exist
 app.use('/', require('./routes/auth-routes'));
 app.use('/', require('./routes/user-routes'));
+app.use('/', require('./routes/room-routes'));
 
 module.exports = app;

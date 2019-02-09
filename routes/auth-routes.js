@@ -61,7 +61,7 @@ router.post('/signup', (req, res, next) => {
   .catch( err => next(err)); // closing User.findOne();
 })
 
-// ////// LOGIN ///////
+/////////////////////     LOGIN     ///////////////////
 router.get('/login', (req, res, next) => {
   res.render('auth/login');
 })
@@ -74,13 +74,36 @@ router.post('/login', passport.authenticate('local', {
 }))
 
 
-///////// LOGOUT ///////////
+/////////////////////     LOGOUT     /////////////////////
 
 router.post('/logout', (req, res, next) => {
   req.logout(); // <== logout method comes from passport and takes care of the destroying the session
     res.redirect('/login')
 })
 
+/////////////////////     SLACK LOGIN     //////////////////////
+router.get('/slack-login', passport.authenticate('slack'));
 
+// callbackURL: '/slack/callback' // <= from 'slack-strategy.js'
+router.get('/slack/callback', passport.authenticate('slack', {
+  successReturnToOrRedirect: '/private',
+  successFlash: 'Slack login successful!',
+  failureRedirect: '/login',
+  failureMessage: 'Slack login failed. Please try to login manually.'
+}))
+
+/////////////////////     GOOGLE LOGIN     //////////////////////
+router.get("/google-login", passport.authenticate("google", {
+  scope: ["https://www.googleapis.com/auth/plus.login",
+          "https://www.googleapis.com/auth/plus.profile.emails.read"]
+}));
+
+router.get("/google/callback", passport.authenticate("google", {
+  successRedirect: "/private",
+  successMessage: 'Google login successful!',
+  failureRedirect: "/login",
+  failureMessage: 'Google login failed. Please try to login manually.'
+  
+}));
 
 module.exports = router;
