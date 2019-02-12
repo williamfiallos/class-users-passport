@@ -2,11 +2,12 @@
   {{#each roomsFromDB}}
   <li> 
     <h3>{{ this.name }} </h3> 
+    <p>- posted by {{ this.owner.fullName }}</p>
     <img src="{{this.imageURL}}" alt="" width="300">
     {{#if this.isOwner}}
-    <form action="/rooms/{{this._id}}/delete">
-      <button type="submit">Delete</button>
-    </form>
+      <form action="/rooms/{{this._id}}/delete">
+        <button type="submit">Delete</button>
+      </form>
     {{/if}}
   </li>
   {{/each}}
