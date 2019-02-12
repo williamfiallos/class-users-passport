@@ -33,7 +33,7 @@ router.post('/create-room', fileUploader.single('imageURL'), (req, res, next) =>
 })
 
 router.get('/rooms', (req, res, next) => {
-  Room.find().populate('owner')
+  Room.find().populate('owner') // .populate allows us to find a user other than by ._id, in this case 'owner'
   .then(roomsFromDB => {
     roomsFromDB.forEach(oneRoom => {
       // each room has the 'owner' property which is user's id
