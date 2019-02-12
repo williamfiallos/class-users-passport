@@ -8,7 +8,9 @@
       <form action="/rooms/{{this._id}}/delete">
         <button type="submit">Delete</button>
       </form>
+      <a href="/rooms/{{this._id}}/edit">Edit the room</a>
     {{/if}}
+      {{!-- <a href="/rooms">Back to rooms list</a> --}}
   </li>
   {{/each}}
 </ul>

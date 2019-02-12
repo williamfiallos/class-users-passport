@@ -14,7 +14,7 @@ router.get('/rooms/add', isLoggedIn, (req, res, next) => {
 
                     // <input type="file" name="imageURL" id="">
 
-router.post('/create-room', fileUploader.single('imageURL'), (req, res, next) => {
+router.post('/rooms/create-room', fileUploader.single('imageURL'), (req, res, next) => {
   // console.log('body: ', req.body);
   // console.log('- - - - -');
   // console.log('file: ', req.file);
@@ -26,8 +26,8 @@ router.post('/create-room', fileUploader.single('imageURL'), (req, res, next) =>
     owner: req.user._id
   })
   .then( newRoom => {
-    console.log('room created: ', newRoom);
-    // res.redirect('/rooms');
+    // console.log('room created: ', newRoom);
+    res.redirect('/rooms');
   })
   .catch( err => next(err) )
 })
@@ -60,5 +60,51 @@ function isLoggedIn(req, res, next){
     res.redirect('/login');
   }
 }
+// http://localhost:3000/rooms/5c5f491110b6c02119f8b475/edit
+//////////// EDIT ROOMS ---Get & Post--- ////////////
+router.get('/rooms/:id/edit', (req, res, next) => {
+  Room.findById(req.params.id)
+  .then( foundRoom => {
+    // console.log(foundRoom)
+    res.render('room-pages/editRoom', { room: foundRoom })
+
+  })
+  .catch(err => console.log('Error while getting the details for book edit: ', err));
+})
+
+
+router.post('/rooms/:id/update',fileUploader.single('imageURL'), (req, res, next) => {
+  // console.log("Updates are: ", req.body, req.file);
+
+  const updatedRoom = {
+    name: req.body.name,
+    description: req.body.description
+  };
+  // if user uplods a new image:
+  if(req.file){
+    updatedRoom.imageURL = req.file.secure_url
+  } 
+
+  Room.findByIdAndUpdate(req.params.id, updatedRoom)
+  .then( theUpdRoom => {
+    // console.log("Is this updated: ", theUpdRoom);
+    // res.redirect(`/books/${updatedBook._id}`);
+    res.redirect('/rooms');
+  } )
+  .catch(err => console.log('Error while saving the updates in the db: ', err));
+})
+
+
+
+// delete route:
+// <form action="/rooms/{{this._id}}/delete">
+/* <form action="/movies/{{this._id}}/delete" method="POST"> */
+router.post('/:id/delete', (req, res, next) => {
+  Room.findByIdAndRemove(req.params.id)
+  .then(() => {
+    res.redirect('/rooms')
+  })
+  .catch( err => console.log("Error while deleting a room: ", err))
+})
 
 module.exports = router;

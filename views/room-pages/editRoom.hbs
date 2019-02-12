@@ -1,0 +1,18 @@
+{{!-- if in the form you want to upload any kind of files (images, music, etc.) you need 
+to add enctype="multipart/form-data" --}}
+<h1>Edit the Room</h1>
+<form action="/rooms/{{room._id}}/update" method="POST" enctype="multipart/form-data">
+  
+  <label for="">Name</label>
+  <input type="text" name="name" id="" value="{{room.name}}">
+
+  <label for="">Description</label>
+  <textarea name="description" id="" cols="30" rows="10">{{room.description}}</textarea>
+  
+  <img src="{{room.imageURL}}" width="200" alt="">
+  <label for="">Upload image</label>
+  <input type="file" name="imageURL" id="">
+
+  <button type="submit">Save changes</button>
+
+</form>
