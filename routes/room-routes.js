@@ -97,14 +97,28 @@ router.post('/rooms/:id/update',fileUploader.single('imageURL'), (req, res, next
 
 
 // delete route:
-// <form action="/rooms/{{this._id}}/delete">
-/* <form action="/movies/{{this._id}}/delete" method="POST"> */
-router.post('/:id/delete', (req, res, next) => {
+// <form action="/rooms/{{this._id}}/delete" method="POST">
+router.post('/rooms/:id/delete', (req, res, next) => {
   Room.findByIdAndRemove(req.params.id)
   .then(() => {
     res.redirect('/rooms')
   })
   .catch( err => console.log("Error while deleting a room: ", err))
+})
+
+// get the details of a room from the DB
+// http://localhost:3000/rooms/5c52542abbd9c887b58e24a7 <== this 'id' will change dynamically when we click on each room
+// router.get('/rooms/:roomId') => '/rooms' is pre-filled and ':roomId' is just a placeholder, can be any word
+router.get('/rooms/:roomId', isLoggedIn, (req, res, next) => {
+  const theRoomId = req.params.roomId;
+  //.populate('owner') => we are saying: give me all the details related to the 'owner' field in the room 
+  // (there's only owner id there so what it does is-finds the rest of information related to that owner based on the id)
+  Room.findById(theRoomId).populate('owner')
+  .then(theRoom => { 
+    // console.log("The requested room is: ", theRoom);
+    res.render('room-pages/room-details', { room: theRoom });
+  })
+  .catch( err => console.log("Error while getting the details of a room: ", err) );
 })
 
 module.exports = router;
