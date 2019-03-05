@@ -115,6 +115,12 @@ router.get('/rooms/:roomId', isLoggedIn, (req, res, next) => {
   // (there's only owner id there so what it does is-finds the rest of information related to that owner based on the id)
   Room.findById(theRoomId).populate('owner')
   .then(theRoom => { 
+          // // if there's a user in a session:
+          // if(req.user){
+          //   if(oneRoom.owner.equals(req.user._id)){
+          //     oneRoom.isOwner = true;
+          //   }
+          // }
     // console.log("The requested room is: ", theRoom);
     res.render('room-pages/room-details', { room: theRoom });
   })
